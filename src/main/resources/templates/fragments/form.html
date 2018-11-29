@@ -1,0 +1,24 @@
+<form class="bookForm" th:fragment="bookForm" style="display:none;">
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+        <div class="invalid-feedback"></div>
+    </div>
+    <div class="form-group">
+        <label for="edition">Edition</label>
+        <input type="text" class="form-control" id="edition" name="edition" placeholder="Edition">
+    </div>
+    <div class="form-group">
+        <label for="author">Author</label>
+        <input type="text" class="form-control" id="author" name="author" placeholder="Author">
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="category">Category</label>
+        <select class="form-control" id="category" name="category">
+        </select>
+    </div>
+</form>

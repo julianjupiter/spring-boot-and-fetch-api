@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <th:block layout:fragment="head">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="../../../../favicon.ico">
+        <title th:text="#{app.name} + ' - ' + ${pageName}">Title</title>
+        <link href="/vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/vendor/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+        <link href="/css/main.css" rel="stylesheet">
+        </th:block>
+    </head>
+    <body>
+        <header th:fragment="header">
+            <!-- Fixed navbar -->
+            <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-orange">
+                <a class="navbar-brand" href="/" th:text="#{app.name}">App Name</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item" th:classappend="${#strings.contains(pageName, 'Home')} ? 'active' : ''">
+                            <a class="nav-link" href="/"><span th:text="#{main.menu.home}">Home</span> <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item" th:classappend="${#strings.contains(pageName, 'Books')} ? 'active' : ''">
+                            <a class="nav-link" href="/books" th:text="#{main.menu.books}">Books</a>
+                        </li>
+                        <li class="nav-item" th:classappend="${#strings.contains(pageName, 'Categories')} ? 'active' : ''">
+                            <a class="nav-link" href="/categories" th:text="#{main.menu.categories}">Categories</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+    </body>
+</html>

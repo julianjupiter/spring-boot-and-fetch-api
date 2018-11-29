@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <th:block th:include="fragments/header :: head"></th:block>
+    </head>
+    <body>
+        <header th:replace="fragments/header :: header"></header>
+        <main class="container">
+            <div class="row">
+                <div class="col">
+                    <th:block th:if="${not #strings.isEmpty(message)}">
+                        <div class="alert alert-success alert-dismissible fade show col-4 offset-4" role="alert">
+                            <span th:text="${message}"></span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </th:block>
+                    <button type="button" class="btn btn-primary" data-action="addBook" data-toggle="modal" data-target="#defaultModal"><i class="far fa-plus-square"></i> New</button>
+                    <table id="bookTable" class="table" style="margin-top:10px;">
+                        <thead>
+                            <tr>
+                                <th class="bg-dark">ID</th>
+                                <th class="bg-dark">Title</th>
+                                <th class="bg-dark">Edition</th>
+                                <th class="bg-dark">Author</th>
+                                <th class="bg-dark">Category</th>
+                                <th class="bg-dark">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!--<div th:if="!${#lists.isEmpty(books)}">-->
+                                <!--<tr th:each="book : ${books}">-->
+                                    <!--<th th:text="${book.id}" scope="row"></th>-->
+                                    <!--<td th:text="${book.title}"></td>-->
+                                    <!--<td th:text="${book.edition}"></td>-->
+                                    <!--<td th:text="${book.author}"></td>-->
+                                    <!--<td th:text="${book.category.name}"></td>-->
+                                    <!--<td class="text-center">-->
+                                        <!--<div class="btn-group" role="group" aria-label="Action Buttons">-->
+                                            <!--<button class="btn btn-info btn-sm" th:attr="data-id=${book.id}" data-toggle="modal" data-target="#viewBookModal"><i class="far fa-eye"></i></button>-->
+                                            <!--<button class="btn btn-success btn-sm" th:attr="data-id=${book.id}" data-toggle="modal" data-target="#updateBookModal"><i class="far fa-edit"></i></button>-->
+                                        <!--</div>-->
+                                    <!--</td>-->
+                                <!--</tr>-->
+                            <!--</div>-->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+        <div th:replace="fragments/modal :: defaultModal"></div>
+        <div th:replace="fragments/modal :: viewBookModal"></div>
+        <div th:replace="fragments/modal :: updateBookModal"></div>
+        <div th:replace="fragments/form :: bookForm"></div>
+        <div th:replace="fragments/table :: viewBookTable"></div>
+        <footer th:replace="fragments/footer :: footer"></footer>
+        <div th:replace="fragments/footer :: script"></div>
+    </body>
+</html>

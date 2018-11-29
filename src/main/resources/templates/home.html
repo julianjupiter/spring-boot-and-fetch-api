@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <th:block th:include="fragments/header :: head"></th:block>
+    </head>
+    <body>
+        <header th:replace="fragments/header :: header"></header>
+        <main role="main" class="container">
+            <h1 class="mt-5" th:text="#{app.name}"></h1>
+        </main>
+        <footer th:replace="fragments/footer :: footer"></footer>
+        <div th:replace="fragments/footer :: script"></div>
+    </body>
+</html>
