@@ -1,4 +1,3 @@
-debugger;
 let modal = $('#defaultModal');
 let modalTitle = $('.modal-title');
 let modalBody = $('.modal-body');
@@ -44,28 +43,31 @@ function defaultModal() {
 
 async function viewAllBooks() {
     $('#bookTable tbody').empty();
-    const books = await bookService.findAll();
-
-    books.forEach(book => {
-        let bookRow = `$(<tr>
-                    <th scope="row">${book.id}</th>
-                    <td>${book.title}</td>
-                    <td>${book.edition}</td>
-                    <td>${book.author}</td>
-                    <td>${book.category.name}</td>
-                    <td class="text-center">
-                        <div class="btn-group" role="group" aria-label="Action Buttons">
-                            <button class="btn btn-info btn-sm" data-id="${book.id}" data-action="viewBook" data-toggle="modal" data-target="#defaultModal"><i class="far fa-eye"></i></button>
-                            <button class="btn btn-success btn-sm" data-id="${book.id}" data-action="editBook" data-toggle="modal" data-target="#defaultModal"><i class="far fa-edit"></i></button>
-                        </div>
-                    </td>
-                </tr>)`;
-        $('#bookTable tbody').append(bookRow);
+    const booksResponse = await bookService.findAll();
+    const booksJson = booksResponse.json();
+    booksJson.then(books => {
+        books.forEach(book => {
+            let bookRow = `$(<tr>
+                        <th scope="row">${book.id}</th>
+                        <td>${book.title}</td>
+                        <td>${book.edition}</td>
+                        <td>${book.author}</td>
+                        <td>${book.category.name}</td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group" aria-label="Action Buttons">
+                                <button class="btn btn-info btn-sm" data-id="${book.id}" data-action="viewBook" data-toggle="modal" data-target="#defaultModal"><i class="far fa-eye"></i></button>
+                                <button class="btn btn-success btn-sm" data-id="${book.id}" data-action="editBook" data-toggle="modal" data-target="#defaultModal"><i class="far fa-edit"></i></button>
+                            </div>
+                        </td>
+                    </tr>)`;
+            $('#bookTable tbody').append(bookRow);
+        });
     });
 }
 
 async function viewBook(modal, id) {
-    const book = await bookService.findById(id);
+    const bookResponse = await bookService.findById(id);
+    const bookJson = bookResponse.json();
 
     modal.find(modalTitle).html('View Book');
     let viewBookTableHidden = $('.viewBookTable:hidden')[0];
@@ -75,16 +77,19 @@ async function viewBook(modal, id) {
     dismissButton.html('Close');
     modal.find(modalFooter).append(dismissButton);
 
-    modal.find('#id').html(book.id);
-    modal.find('#title').html(book.title);
-    modal.find('#edition').html(book.edition);
-    modal.find('#author').html(book.author);
-    modal.find('#description').html(book.description);
-    modal.find('#category').html(book.category.name);
+    bookJson.then(book => {
+        modal.find('#id').html(book.id);
+        modal.find('#title').html(book.title);
+        modal.find('#edition').html(book.edition);
+        modal.find('#author').html(book.author);
+        modal.find('#description').html(book.description);
+        modal.find('#category').html(book.category.name);
+    });
 }
 
 async function addBook(modal) {
-    const categories = await categoryService.findAll();
+    const categoriesResponse = await categoryService.findAll();
+    const categoriesJson = categoriesResponse.json();
 
     modal.find(modalTitle).html('Add Book');
     let bookFormHidden = $('.bookForm:hidden')[0];
@@ -97,8 +102,10 @@ async function addBook(modal) {
     primaryButton.prop('id', 'saveBookButton');
     primaryButton.html('Save');
     modal.find(modalFooter).append(primaryButton);
-    categories.forEach(category => {
-        modal.find('#category').append(new Option(category.name, category.id));
+    categoriesJson.then(categories => {
+        categories.forEach(category => {
+            modal.find('#category').append(new Option(category.name, category.id));
+        });
     });
 
     $('#saveBookButton').click(async function(e){
@@ -117,30 +124,41 @@ async function addBook(modal) {
             }
         };
 
-        console.log(data);
+        const bookResponse = await bookService.add(data);
 
-        const response = await bookService.add(data);
-        console.log(response);
-        if (response.status == 200) {
-            console.log(response);
+        if (bookResponse.status == 201) {
             viewAllBooks();
-            modal.modal('hide');
             modal.find('.modal-title').html('Success');
-            modal.find('.modal-body').html('Successful update!');
+            modal.find('.modal-body').html('Book added!');
+            dismissButton.html('Close');
+            modal.find(modalFooter).html(dismissButton);
             $('#defaultModal').modal('show');
-        } else {
-//            alert(response.errors[0].message);
-            response.errors.forEach(function(error){
-                modal.find('#' + error.field).addClass('is-invalid');
-                modal.find('#' + error.field).next('.invalid-feedback').text(error.message);
+        } else if (bookResponse.status == 400) {
+            bookResponse.json().then(response => {
+                response.validationErrors.forEach(function(error){
+                    modal.find('#' + error.field).addClass('is-invalid');
+                    modal.find('#' + error.field).next('.invalid-feedback').text(error.message);
+                });
             });
+        } else {
+            bookResponse.json().then(response => {
+                let alert = `<div class="alert alert-success alert-dismissible fade show col-12" role="alert">
+                        ${response.error}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>`;
+                 modal.find('.modal-body').prepend(alert);
+             });
         }
     });
 }
 
 async function editBook(modal, id) {
-    const book = await bookService.findById(id);
-    const categories = await categoryService.findAll();
+    const bookResponse = await bookService.findById(id);
+    const bookJson = bookResponse.json();
+    const categoriesResponse = await categoryService.findAll();
+    const categoriesJson = categoriesResponse.json();
 
     let idInput = `<div class="form-group">
             <label for="id">ID</label>
@@ -161,15 +179,22 @@ async function editBook(modal, id) {
     primaryButton.html('Update');
     modal.find(modalFooter).append(primaryButton);
 
-    modal.find('#id').val(book.id);
-    modal.find('#title').val(book.title);
-    modal.find('#edition').val(book.edition);
-    modal.find('#author').val(book.author);
-    modal.find('#description').val(book.description);
-    categories.forEach(category => {
-        modal.find('#category').append(new Option(category.name, category.id));
+    bookJson.then(book => {
+        modal.find('#id').val(book.id);
+        modal.find('#title').val(book.title);
+        modal.find('#edition').val(book.edition);
+        modal.find('#author').val(book.author);
+        modal.find('#description').val(book.description);
+        categoriesJson.then(categories => {
+            categories.forEach(category => {
+                if (book.category.id == category.id)
+                    modal.find('#category').append(new Option(category.name, category.id, false, true));
+                else
+                    modal.find('#category').append(new Option(category.name, category.id));
+            });
+        });
     });
-    modal.find('#category option[value=' + book.category.id + ']').prop('selected', true);
+
 
     $('#updateBookButton').click(async function(e){
         let id = bookForm.find('#id').val().trim();
@@ -189,24 +214,38 @@ async function editBook(modal, id) {
             }
         };
 
-        console.log(data);
+        const bookResponse = await bookService.update(id, data);
 
-        const response = await bookService.update(id, data);
-
-        console.log(response);
-
-        if (response != null) {
+        if (bookResponse.status == 200) {
             viewAllBooks();
-            modal.modal('hide');
             modal.find('.modal-title').html('Success');
-            modal.find('.modal-body').html('Successful update!');
+            modal.find('.modal-body').html('Book updated!');
+            dismissButton.html('Close');
+            modal.find(modalFooter).html(dismissButton);
             $('#defaultModal').modal('show');
+        } else if (bookResponse.status == 400) {
+            bookResponse.json().then(response => {
+                response.validationErrors.forEach(function(error){
+                    modal.find('#' + error.field).addClass('is-invalid');
+                    modal.find('#' + error.field).next('.invalid-feedback').text(error.message);
+                });
+            });
+        } else {
+            bookResponse.json().then(response => {
+                let alert = `<div class="alert alert-success alert-dismissible fade show col-12" role="alert">
+                        ${response.error}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>`;
+                 modal.find('.modal-body').prepend(alert);
+             });
         }
     });
 }
 
 const http = {
-    fetch: async function(url, options) {
+    fetch: async function(url, options = {}) {
         const response = await fetch(url, {
             headers: {
                 'Accept': 'application/json',
@@ -215,8 +254,7 @@ const http = {
             ...options,
         });
 
-//        return {status: response.status, data: response.json()};
-        return response.json();
+        return response;
     }
 };
 

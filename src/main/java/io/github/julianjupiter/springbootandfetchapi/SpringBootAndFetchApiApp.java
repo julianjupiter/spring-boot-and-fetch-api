@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringBootJpaManyToOneApp {
+public class SpringBootAndFetchApiApp {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringBootJpaManyToOneApp.class, args);
+		SpringApplication.run(SpringBootAndFetchApiApp.class, args);
 	}
 }

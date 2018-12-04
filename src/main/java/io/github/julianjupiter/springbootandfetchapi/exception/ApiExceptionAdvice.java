@@ -27,8 +27,8 @@ public class ApiExceptionAdvice {
     public ApiErrorResponse handleValidationException(ValidationException exception) {
         return new ApiErrorResponse(
                 ZonedDateTime.now(),
-                HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 exception.getMessage(),
                 exception.getPath())
                 .withValidationErrors(exception.getValidationErrors());
