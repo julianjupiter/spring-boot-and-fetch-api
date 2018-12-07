@@ -9,6 +9,7 @@ let dismissButton = $('<button type="button" class="btn btn-secondary" data-dism
 
 $(document).ready(function(){
     viewAllBooks();
+    viewAllCategories();
     defaultModal();
 });
 
@@ -82,7 +83,7 @@ async function viewBook(modal, id) {
         modal.find('#title').html(book.title);
         modal.find('#edition').html(book.edition);
         modal.find('#author').html(book.author);
-        modal.find('#description').html(book.description);
+        modal.find('#bookDescription').html(book.description);
         modal.find('#category').html(book.category.name);
     });
 }
@@ -112,13 +113,13 @@ async function addBook(modal) {
         let title = bookForm.find('#title').val().trim();
         let edition = bookForm.find('#edition').val().trim();
         let author = bookForm.find('#author').val().trim();
-        let description = bookForm.find('#description').val().trim();
+        let bookDescription = bookForm.find('#bookDescription').val().trim();
         let categoryId = bookForm.find('#category option:selected').val().trim();
         let data = {
             title: title,
             edition: edition,
             author: author,
-            description, description,
+            description: bookDescription,
             category: {
                 id: categoryId
             }
@@ -184,7 +185,7 @@ async function editBook(modal, id) {
         modal.find('#title').val(book.title);
         modal.find('#edition').val(book.edition);
         modal.find('#author').val(book.author);
-        modal.find('#description').val(book.description);
+        modal.find('#bookDescription').val(book.description);
         categoriesJson.then(categories => {
             categories.forEach(category => {
                 if (book.category.id == category.id)
@@ -201,14 +202,14 @@ async function editBook(modal, id) {
         let title = bookForm.find('#title').val().trim();
         let edition = bookForm.find('#edition').val().trim();
         let author = bookForm.find('#author').val().trim();
-        let description = bookForm.find('#description').val().trim();
+        let bookDescription = bookForm.find('#bookDescription').val().trim();
         let categoryId = bookForm.find('#category option:selected').val().trim();
         let data = {
             id: id,
             title: title,
             edition: edition,
             author: author,
-            description, description,
+            description: bookDescription,
             category: {
                 id: categoryId
             }
@@ -283,6 +284,29 @@ const bookService = {
         });
     },
 };
+
+async function viewAllCategories() {
+    $('#categoryTable tbody').empty();
+    const categoriesResponse = await categoryService.findAll();
+    const categoriesJson = categoriesResponse.json();
+    categoriesJson.then(categories => {
+        categories.forEach(category => {
+            let categoryRow = `$(<tr>
+                        <th scope="row">${category.id}</th>
+                        <td>${category.name}</td>
+                        <td>${category.description}</td>
+                        <td>${category.createAt}</td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group" aria-label="Action Buttons">
+                                <button class="btn btn-info btn-sm" data-id="${category.id}" data-action="viewCategory" data-toggle="modal" data-target="#defaultModal"><i class="far fa-eye"></i></button>
+                                <button class="btn btn-success btn-sm" data-id="${category.id}" data-action="editCategory" data-toggle="modal" data-target="#defaultModal"><i class="far fa-edit"></i></button>
+                            </div>
+                        </td>
+                    </tr>)`;
+            $('#categoryTable tbody').append(categoryRow);
+        });
+    });
+}
 
 const categoryService = {
     findAll: async () => {

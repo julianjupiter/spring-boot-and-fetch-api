@@ -8,36 +8,25 @@
     <main class="container">
         <div class="row">
             <div class="col">
-                <button class="btn btn-primary" data-action="addCategory"><i class="far fa-plus-square"></i> New</button>
+                <button type="button" class="btn btn-primary" data-action="addCategory" data-toggle="modal" data-target="#defaultModal"><i class="far fa-plus-square"></i> New</button>
                 <table id="categoryTable" class="table" style="margin-top:10px;">
                     <thead>
                     <tr>
                         <th class="bg-dark">ID</th>
                         <th class="bg-dark">Name</th>
                         <th class="bg-dark">Description</th>
+                        <th class="bg-dark">Created At</th>
                         <th class="bg-dark">Action</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <div th:if="!${#lists.isEmpty(categories)}">
-                        <tr th:each="category : ${categories}">
-                            <th th:text="${category.id}" scope="row"></th>
-                            <td th:text="${category.name}"></td>
-                            <td th:text="${category.description}"></td>
-                            <td class="text-center">
-                                <div class="btn-group" role="group" aria-label="Action Buttons">
-                                    <button class="btn btn-info btn-sm" data-action="view" th:attr="data-id=${category.id}"><i class="far fa-eye"></i></button>
-                                    <button class="btn btn-success btn-sm" data-action="edit" th:attr="data-id=${category.id}"><i class="far fa-edit"></i></button>
-                                    <button class="btn btn-danger btn-sm" data-action="delete" th:attr="data-id=${category.id}"><i class="far fa-trash-alt"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    </div>
                     </tbody>
                 </table>
             </div>
         </div>
     </main>
+    <div th:replace="fragments/modal :: defaultModal"></div>
+    <div th:replace="fragments/form :: categoryForm"></div>
     <footer th:replace="fragments/footer :: footer"></footer>
     <div th:replace="fragments/footer :: script"></div>
     </body>
