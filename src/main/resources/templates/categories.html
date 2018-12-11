@@ -14,7 +14,6 @@
                     <tr>
                         <th class="bg-dark">ID</th>
                         <th class="bg-dark">Name</th>
-                        <th class="bg-dark">Description</th>
                         <th class="bg-dark">Created At</th>
                         <th class="bg-dark">Action</th>
                     </tr>
@@ -27,6 +26,7 @@
     </main>
     <div th:replace="fragments/modal :: defaultModal"></div>
     <div th:replace="fragments/form :: categoryForm"></div>
+    <div th:replace="fragments/table :: viewCategoryTable"></div>
     <footer th:replace="fragments/footer :: footer"></footer>
     <div th:replace="fragments/footer :: script"></div>
     </body>
